@@ -1,0 +1,41 @@
+package analizadorLexico;
+
+import java_cup.runtime.*;
+
+
+parser code {:
+	// Connect this parser to a scanner!
+	public parser(Lexer lex) {
+		super(lex);
+	}
+
+        public void syntax_error(Symbol cur_token) {
+            System.out.println("Error sobrecargado en <" + cur_token.value + ">");
+        }
+:}
+
+/* Terminals (tokens returned by the scanner). */
+terminal String          CURRENT_DIRECTORY, CONTENTS_DIRECTORY, LONG, HIDDEN;
+terminal String          CHANGE_DIRECTORY, TOUCH, MAKE_DIR, MOVE, COPY;
+terminal String          REMOVE_FILE, REMOVE_DIR, SLASH, AGREGAR, QUITAR, ID;
+
+/* Non-terminals */
+non terminal String           path, path1, id, slash;
+
+/* The grammar */
+start with path;
+
+path ::=	 path path1
+			| path1
+			;
+
+path1 ::=	slash:e1 id:e2
+			    {: RESULT = e1 + e2; System.out.printf("path = %s\n", RESULT); :} 
+			;
+
+id ::= ID:e {:RESULT = e;:}
+			;
+
+slash ::= SLASH:e {:RESULT = e;:}
+			| error:e slash
+			;
