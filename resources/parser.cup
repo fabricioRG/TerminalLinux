@@ -10,32 +10,95 @@ parser code {:
 	}
 
         public void syntax_error(Symbol cur_token) {
-            System.out.println("Error sobrecargado en <" + cur_token.value + ">");
+            System.out.println("Error sintactico en <" + cur_token.value + ">");
         }
 :}
 
 /* Terminals (tokens returned by the scanner). */
-terminal String          CURRENT_DIRECTORY, CONTENTS_DIRECTORY, LONG, HIDDEN;
-terminal String          CHANGE_DIRECTORY, TOUCH, MAKE_DIR, MOVE, COPY;
-terminal String          REMOVE_FILE, REMOVE_DIR, SLASH, AGREGAR, QUITAR, ID;
+terminal String          PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ;
+terminal String          CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL;
+terminal String          RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE;
 
 /* Non-terminals */
-non terminal String           path, path1, id, slash;
+non terminal String         main, path, path1;
+non terminal String 		ls, ls1, l1,l2;
+non terminal String 		cd, cd1;
+non terminal String 		touch, touch1, touch2;
+non terminal String 		mv, mv1, mv2, mv3;
+non terminal String 		mkdir, mkdir1;
 
 /* The grammar */
-start with path;
+start with main;
 
-path ::=	 path path1
-			| path1
+main ::= 	touch
+ 			| mv
+ 			| ls
+ 			| cd
+ 			| mkdir
+	 			;
+
+/*==============Gramtica LS==============*/
+ls ::=		LS:e1 ls1:e2 {:RESULT = e1 + " " + e2; System.out.printf("%s\n", RESULT);:}
+			| LS
 			;
 
-path1 ::=	slash:e1 id:e2
-			    {: RESULT = e1 + e2; System.out.printf("path = %s\n", RESULT); :} 
+ls1 ::= 	l1 l2
+			| l2 l1
+			| l1
+			| l2
 			;
 
-id ::= ID:e {:RESULT = e;:}
+l1 ::= 		LONG:e {:RESULT = e;:}
 			;
 
-slash ::= SLASH:e {:RESULT = e;:}
-			| error:e slash
+l2 ::= 		HIDDEN:e {:RESULT = e;:}
 			;
+
+/*==============Gramtica CD==============*/
+cd ::= 		CD cd1
+			;
+
+cd1 ::=		path
+			| BACK
+			| ACTUAL
+			| error
+			;
+
+/*=============Gramtica TOUCH=============*/
+touch ::= 	TOUCH:e1 touch1:e2
+			;
+
+touch1 ::= 	path:e
+			| ID:e
+			;
+
+/*==============Gramtica MV==============*/
+mv ::=		MV mv1
+			;
+
+mv1 ::=		ID mv2
+			;
+
+mv2 ::=		path
+			| BACK
+			| ACTUAL
+			;
+
+/*==============Gramtica PATH==============*/
+
+mkdir ::= 	MKDIR mkdir1
+			;
+
+mkdir1 ::= ID
+			|VARIOUS path
+			;
+
+
+/*==============Gramtica PATH==============*/
+
+path ::= path path1
+		| path1
+		;
+
+path1 ::= SLASH:e1 ID:e2 {:RESULT= e1 + e2;System.out.printf("path = %s", RESULT); :}
+		;

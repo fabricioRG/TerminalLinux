@@ -17,7 +17,7 @@ public class AnalizadorSintactico01 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String input = "algo/algo/algo";
+        String input = "touch /algo";
         StringReader sr = new StringReader(input);
         
         Lexer lexer = new Lexer(sr);

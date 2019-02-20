@@ -20,11 +20,6 @@ WhiteSpace = [ \t\f]
 Letra = [a-zA-Z]
 Digito = [1-9][0-9]*
 Identificador = ({Letra}|{Digito})({Letra}|{Digito}|"-"|"_"|"@"|"+"|"*"|"#"|".")*
-Execute = "x"
-Write = "w"
-Read = "r"
-Agregar = ("+"){Execute}?{Write}?{Read}?
-Quitar = ("-"){Execute}?{Write}?{Read}?
 
 %{
     StringBuilder string = new StringBuilder();
@@ -48,22 +43,30 @@ Quitar = ("-"){Execute}?{Write}?{Read}?
 /* reglas lexicas */
 <YYINITIAL> {
 
-	"pwd" {return symbol(CURRENT_DIRECTORY);}
-	"ls" {return symbol(CONTENTS_DIRECTORY);}
-	"-l" {return symbol(LONG);}
-	"-a" {return symbol(HIDDEN);}
-	"cd" {return symbol(CHANGE_DIRECTORY);}
-	"touch"	{return symbol(TOUCH);}
-	"mkdir" {return symbol(MAKE_DIR);}
-	"mv" {return symbol(MOVE);}
-	"cp" {return symbol(COPY);}
-	"rm" {return symbol(REMOVE_FILE);}
-	"rmdir" {return symbol(REMOVE_DIR);}
-	"/" {return symbol(SLASH);}
-	{Agregar} {return symbol(AGREGAR, yytext());}
-	{Quitar} {return symbol(QUITAR, yytext());}
-	{Identificador} {return symbol(ID, yytext());}
-	{WhiteSpace} 		{/*Nothing to do*/}
+	"pwd" {return symbol(PWD, yytext());}
+	"ls" {return symbol(LS, yytext());}
+	"-l" {return symbol(LONG, yytext());}
+	"-a" {return symbol(HIDDEN, yytext());}
+	"-p" {return symbol(VARIOUS, yytext());}
+	"-r" {return symbol(ALL, yytext());}
+	"cd" {return symbol(CD, yytext());}
+	"touch"	{return symbol(TOUCH, yytext());}
+	"mkdir" {return symbol(MKDIR, yytext());}
+	"mv" {return symbol(MV, yytext());}
+	"cp" {return symbol(CP, yytext());}
+	"rm" {return symbol(RM, yytext());}
+	"rmdir" {return symbol(RMDIR, yytext());}
+	"chmod" {return symbol(CHMOD, yytext());}
+	".." {return symbol(BACK, yytext());}
+	"." {return symbol(ACTUAL, yytext());}
+	"x" {return symbol(EXECUTE, yytext());}
+	"w" {return symbol(WRITE, yytext());}
+	"r" {return symbol(READ, yytext());}
+	"+" {return symbol(AGREGAR, yytext());}
+	"-" {return symbol(QUITAR, yytext());}
+	"/" {return symbol(SLASH, yytext());}
+	{Identificador} {return symbol(ID, yytext());}	
+	{WhiteSpace} 		{return symbol(SPACE, yytext());}
 	{LineTerminator} 	{/*Nothing to do*/ System.out.println("salto de linea");}
 
 }
