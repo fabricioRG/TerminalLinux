@@ -147,7 +147,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
     public void keyReleased(KeyEvent e) {
         if (e.getKeyChar() == '\n') {
             System.out.println(mat.getText());
-            mat.setText();
+            mat.analizarTexto();
         }
 //        DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
 //        DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTree1.get;

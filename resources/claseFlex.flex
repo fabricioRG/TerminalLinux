@@ -49,6 +49,7 @@ Identificador = ({Letra}|{Digito})({Letra}|{Digito}|"-"|"_"|"@"|"+"|"*"|"#"|".")
 	"-a" {return symbol(HIDDEN, yytext());}
 	"-p" {return symbol(VARIOUS, yytext());}
 	"-r" {return symbol(ALL, yytext());}
+	"-R" {return symbol(RECURSIVE, yytext());}
 	"cd" {return symbol(CD, yytext());}
 	"touch"	{return symbol(TOUCH, yytext());}
 	"mkdir" {return symbol(MKDIR, yytext());}

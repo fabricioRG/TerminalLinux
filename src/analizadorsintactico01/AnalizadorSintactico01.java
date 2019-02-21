@@ -17,17 +17,7 @@ public class AnalizadorSintactico01 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String input = "touch /algo";
-        StringReader sr = new StringReader(input);
-        
-        Lexer lexer = new Lexer(sr);
-        parser pars = new parser(lexer);
-        try {
-            pars.parse();
-        } catch (Exception ex) {
-            Logger.getLogger(AnalizadorSintactico01.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        Analizador analizador = new Analizador();
-//        analizador.setVisible(true);
+        Analizador analizador = new Analizador();
+        analizador.setVisible(true);
     }
 }

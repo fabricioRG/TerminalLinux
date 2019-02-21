@@ -1,6 +1,11 @@
 package analizadorLexico.backend;
 
+import analizadorLexico.Lexer;
 import analizadorLexico.frontend.AreaTexto;
+import analizadorLexico.parser;
+import java.io.StringReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -9,6 +14,7 @@ import analizadorLexico.frontend.AreaTexto;
 public class ManejadorAreaTexto {
 
     public static final String COMANDOS = "comandos / $: ";
+    public static final String ACCION_VALIDA = "---Accion valida---\n";
     private AreaTexto at = null;
     public static int SALTO_LINEA = 10;
 
@@ -18,11 +24,25 @@ public class ManejadorAreaTexto {
     
     public String getText(){
         String text = at.getjTextPane1().getText();
-        return text.substring(text.lastIndexOf("$") + 2, text.length() - 1);
+        return text.substring(text.lastIndexOf("$") + 3, text.length() - 1);
+    }
+    
+    public void analizarTexto(){
+        String input = getText();
+        StringReader sr = new StringReader(input);
+        
+        Lexer lexer = new Lexer(sr);
+        parser pars = new parser(lexer);
+        try {
+            pars.parse();
+            setText();
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorAnalizador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void setText(){
-        at.getjTextPane1().setText(at.getjTextPane1().getText() + COMANDOS);
+        at.getjTextPane1().setText(at.getjTextPane1().getText() + ACCION_VALIDA + COMANDOS);
     }
     
     //Metodo que tiene como funcion principal iniciar el automata encargado de evaluar los caracteres

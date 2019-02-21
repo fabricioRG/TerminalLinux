@@ -15,90 +15,225 @@ parser code {:
 :}
 
 /* Terminals (tokens returned by the scanner). */
-terminal String          PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ;
+terminal String          PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ, RECURSIVE;
 terminal String          CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL;
 terminal String          RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE;
 
 /* Non-terminals */
-non terminal String         main, path, path1;
-non terminal String 		ls, ls1, l1,l2;
+non terminal String         main, main1, main2, main3, space, path, path1;
+non terminal String 		pwd, ls, ls1, l1,l2;
 non terminal String 		cd, cd1;
 non terminal String 		touch, touch1, touch2;
 non terminal String 		mv, mv1, mv2, mv3;
-non terminal String 		mkdir, mkdir1;
+non terminal String 		mkdir, mkdir1, p;
+non terminal String 		rm, rm1, rm2, rm3;
+non terminal String 		cp, cp1, cp2, cp3, cp4, cp5;
+non terminal String 		rmdir, rmdir1;
+non terminal String 		chmod, chmod1, chmod2, chmod3, chmod4, x, w, r;
 
 /* The grammar */
 start with main;
 
-main ::= 	touch
- 			| mv
- 			| ls
- 			| cd
- 			| mkdir
-	 			;
+
+/*==============Gramtica main==============*/
+main ::= 	main2
+			;
+
+main1 ::=	space
+			;
+
+main2 ::= 	pwd
+			| ls
+			| cd
+			| touch
+			| mv
+			| mkdir
+			| rm
+			| cp
+			| rmdir
+			| chmod
+			;
+
+main3 ::=	space
+			;
+
+/*==============Gramtica PWD==============*/
+
+pwd ::= 	PWD
+			;
+
 
 /*==============Gramtica LS==============*/
-ls ::=		LS:e1 ls1:e2 {:RESULT = e1 + " " + e2; System.out.printf("%s\n", RESULT);:}
+ls ::=		LS space ls1
 			| LS
 			;
 
-ls1 ::= 	l1 l2
-			| l2 l1
+ls1 ::=		l1 space l2
+			| l2 space l1
 			| l1
 			| l2
 			;
 
-l1 ::= 		LONG:e {:RESULT = e;:}
+l1 ::=		LONG
 			;
 
-l2 ::= 		HIDDEN:e {:RESULT = e;:}
+l2 ::=		HIDDEN
 			;
 
 /*==============Gramtica CD==============*/
-cd ::= 		CD cd1
+
+cd ::=		CD space cd1
 			;
 
-cd1 ::=		path
-			| BACK
+cd1 ::=		BACK
 			| ACTUAL
-			| error
+			| path
 			;
 
-/*=============Gramtica TOUCH=============*/
-touch ::= 	TOUCH:e1 touch1:e2
+/*==============Gramtica TOUCH==============*/
+
+touch ::= 	TOUCH space touch1
 			;
 
-touch1 ::= 	path:e
-			| ID:e
+touch1 ::= 	touch1 space touch2
+			| touch2
 			;
+
+touch2 ::=	ID
+			| path
+			; 
 
 /*==============Gramtica MV==============*/
-mv ::=		MV mv1
+mv ::=		MV space mv1
 			;
 
-mv1 ::=		ID mv2
+mv1 ::=		mv2 space mv3
 			;
 
 mv2 ::=		path
-			| BACK
+			| ID
+			;
+
+mv3 ::=		mv2
 			| ACTUAL
+			| BACK
+			;
+
+/*==============Gramtica MKDIR==============*/
+
+mkdir ::= 	MKDIR space mkdir1
+			;
+
+mkdir1 ::= 	ID
+			| p space path
+			;
+
+p ::=		VARIOUS
+			;
+
+/*==============Gramtica RM==============*/
+
+rm ::=		RM space rm1
+			;
+
+rm1 ::=		rm2 space rm3
+			| rm3
+			;
+
+rm2 ::=		ALL
+			;
+
+rm3 ::= 	path
+			| ID
+			;
+
+/*==============Gramtica CP==============*/
+
+cp ::=		CP space cp1
+			;
+
+cp1 ::=		cp2 space cp3
+			| cp3
+			;
+
+cp2 ::=		ALL
+			;
+
+cp3 ::=		cp4 space cp5
+			;
+
+cp4 ::=		path
+			| ID
+			;
+
+cp5 ::= 	cp4
+			;
+
+/*==============Gramtica RMDIR==============*/
+
+rmdir ::= 	RMDIR space rmdir1
+			;
+
+rmdir1 ::= 	path
+			| ID
+			| ACTUAL
+			| BACK
+			;
+
+/*==============Gramtica RMDIR==============*/
+
+chmod ::=	CHMOD space RECURSIVE space chmod1
+			| CHMOD space chmod1
+			;
+
+chmod1 ::= 	chmod2 space chmod3 space chmod4
+			;
+
+chmod2 ::=	AGREGAR
+			| QUITAR
+			;
+
+chmod3 ::= 	r w x
+			| w x r
+			| x r w 
+			| r x w 
+			| w r x
+			| x w r 
+			| r x
+			| r w
+			| w x 
+			| w r 
+			| x w 
+			| x r
+			| x 
+			| r
+			| w
+			;
+
+chmod4 ::=	path
+			| ID
+			;
+
+x ::= 		EXECUTE
+			;
+
+w ::=		WRITE
+			;
+
+r ::=		READ
 			;
 
 /*==============Gramtica PATH==============*/
 
-mkdir ::= 	MKDIR mkdir1
+path ::= 	path path1
+			| path1
 			;
 
-mkdir1 ::= ID
-			|VARIOUS path
-			;
-
+path1 ::= 	SLASH:e1 ID:e2 {:RESULT= e1 + e2;System.out.printf("path = %s\n", RESULT); :}
+		;
 
 /*==============Gramtica PATH==============*/
 
-path ::= path path1
-		| path1
-		;
-
-path1 ::= SLASH:e1 ID:e2 {:RESULT= e1 + e2;System.out.printf("path = %s", RESULT); :}
-		;
+space ::=	space SPACE
+			| SPACE
+			;
