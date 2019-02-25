@@ -1,9 +1,16 @@
 package analizadorLexico;
 
 import java_cup.runtime.*;
+import analizadorLexico.backend.*;
+import analizadorLexico.sym;
 
 
 parser code {:
+
+	private int positionNode = 0;
+	private String nodoAnterior = null;
+	private ManejadorParser mp = new ManejadorParser();
+
 	// Connect this parser to a scanner!
 	public parser(Lexer lex) {
 		super(lex);
@@ -17,10 +24,10 @@ parser code {:
 /* Terminals (tokens returned by the scanner). */
 terminal String          PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ, RECURSIVE;
 terminal String          CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL;
-terminal String          RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE;
+terminal String          RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE, EXIT;
 
 /* Non-terminals */
-non terminal String         main, main1, main2, main3, space, path, path1;
+non terminal String         main, main1, main2, main3, space, path, path1, exit;
 non terminal String 		pwd, ls, ls1, l1,l2;
 non terminal String 		cd, cd1;
 non terminal String 		touch, touch1, touch2;
@@ -43,6 +50,7 @@ main1 ::=	space
 			;
 
 main2 ::= 	pwd
+			| exit
 			| ls
 			| cd
 			| touch
@@ -99,8 +107,8 @@ touch1 ::= 	touch1 space touch2
 			| touch2
 			;
 
-touch2 ::=	ID
-			| path
+touch2 ::=	ID:e {:mp.touchById("ID: " + e);:}
+			| path {:mp.touchByPath("Nodo: " + nodoAnterior);:}
 			; 
 
 /*==============Gramtica MV==============*/
@@ -225,15 +233,20 @@ r ::=		READ
 
 /*==============Gramtica PATH==============*/
 
-path ::= 	path path1
+path ::= 	path path1 
 			| path1
 			;
 
-path1 ::= 	SLASH:e1 ID:e2 {:RESULT= e1 + e2;System.out.printf("path = %s\n", RESULT); :}
+path1 ::= 	SLASH:e1 ID:e2 {:RESULT= e2;System.out.printf("%s\n", RESULT); positionNode++;mp.isNode(RESULT, nodoAnterior, positionNode);nodoAnterior = RESULT;:}
 		;
 
 /*==============Gramtica PATH==============*/
 
-space ::=	space SPACE
-			| SPACE
+space ::=	space SPACE 
+			| SPACE {: positionNode = 0; nodoAnterior = null;:}
+			;
+
+/*==============Gramtica PATH==============*/
+
+exit ::=	EXIT {:mp.exit();:}
 			;

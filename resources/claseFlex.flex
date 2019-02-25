@@ -58,6 +58,7 @@ Identificador = ({Letra}|{Digito})({Letra}|{Digito}|"-"|"_"|"@"|"+"|"*"|"#"|".")
 	"rm" {return symbol(RM, yytext());}
 	"rmdir" {return symbol(RMDIR, yytext());}
 	"chmod" {return symbol(CHMOD, yytext());}
+	"exit" {return symbol(EXIT, yytext());}
 	".." {return symbol(BACK, yytext());}
 	"." {return symbol(ACTUAL, yytext());}
 	"x" {return symbol(EXECUTE, yytext());}

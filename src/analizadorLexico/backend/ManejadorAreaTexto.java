@@ -15,6 +15,7 @@ public class ManejadorAreaTexto {
 
     public static final String COMANDOS = "comandos / $: ";
     public static final String ACCION_VALIDA = "---Accion valida---\n";
+    public static final String ACCION_NO_VALIDA = "---Accion no valida: ";
     private AreaTexto at = null;
     public static int SALTO_LINEA = 10;
 
@@ -35,14 +36,19 @@ public class ManejadorAreaTexto {
         parser pars = new parser(lexer);
         try {
             pars.parse();
-            setText();
+            setText(0, null);
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorAnalizador.class.getName()).log(Level.SEVERE, null, ex);
+            setText(1, ACCION_NO_VALIDA + ex.getMessage() + "---\n");
+            ex.printStackTrace();
         }
     }
     
-    public void setText(){
-        at.getjTextPane1().setText(at.getjTextPane1().getText() + ACCION_VALIDA + COMANDOS);
+    public void setText(int option, String cadena){
+        if (option == 0){
+        at.getjTextPane1().setText(at.getjTextPane1().getText() + ACCION_VALIDA + COMANDOS);    
+        } else {
+            at.getjTextPane1().setText(at.getjTextPane1().getText() + cadena + COMANDOS);
+        }
     }
     
     //Metodo que tiene como funcion principal iniciar el automata encargado de evaluar los caracteres
@@ -52,6 +58,12 @@ public class ManejadorAreaTexto {
             System.out.println("algo");
         }
     }
-    
-    
+
+    public AreaTexto getAt() {
+        return at;
+    }
+
+    public void setAt(AreaTexto at) {
+        this.at = at;
+    }
 }

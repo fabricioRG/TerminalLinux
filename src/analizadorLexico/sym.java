@@ -8,6 +8,7 @@ package analizadorLexico;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
+  public static final int EXIT = 27;
   public static final int VARIOUS = 17;
   public static final int LONG = 4;
   public static final int READ = 8;
@@ -62,7 +63,8 @@ public class sym {
   "QUITAR",
   "ID",
   "CHMOD",
-  "SPACE"
+  "SPACE",
+  "EXIT"
   };
 }
 

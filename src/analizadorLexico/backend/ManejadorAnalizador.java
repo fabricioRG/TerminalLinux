@@ -65,11 +65,4 @@ public class ManejadorAnalizador {
             System.exit(0);
     }
 
-    //Metodo que inicializa el automta de pila, para escribirlo en un archivo de texto o html
-    public void iniciarAPD() {
-        AreaTexto at = (AreaTexto) analizador.jTabbedPane.getSelectedComponent();
-        //Archivos archivos = new Archivos(analizador, at);
-        //archivos.escribirArchivo();
-    }
-
 }
