@@ -32,7 +32,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
         jTextPane1.addKeyListener(this);
         jTextPane1.addMouseListener(this);
         mat = new ManejadorAreaTexto(this);
-        jTextPane1.setText("comandos / $: ");
+        jTextPane1.setText("comandos /home $: ");
     }
 
     /**
@@ -149,11 +149,6 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
             System.out.println(mat.getText());
             mat.analizarTexto();
         }
-//        DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
-//        DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTree1.get;
-//        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-//        root.add(new DefaultMutableTreeNode(jTextPane1.getText()));
-//        model.reload();
     }
 
     @Override
