@@ -32,7 +32,7 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
         jTextPane1.addKeyListener(this);
         jTextPane1.addMouseListener(this);
         mat = new ManejadorAreaTexto(this);
-        jTextPane1.setText("comandos /home $: ");
+        jTextPane1.setText("comandos / $: ");
     }
 
     /**

@@ -7,12 +7,12 @@ import Node.Nodo;
 
 parser code {:
 
-	public static String CD_HOME = "/home"; //root por defecto
+	public static String CD_ROOT = "/"; //root por defecto
 	public static int OPTION_DIRECTORIO = 0;
 	public static int OPTION_ARCHIVO = 1;
-	private int positionNode = 0; //Posicion de los nodos en el arbol
+	private int positionNode = 1; //Posicion de los nodos en el arbol
 	private int option = 0; //Directorio = 0, Path = 1
-	private String nodoAnterior = null;
+	private String nodoAnterior = "";
 	private ManejadorParser mp = null;
 	private Nodo nodo = null;
 
@@ -22,6 +22,7 @@ parser code {:
 	public parser(Lexer lex, ManejadorParser mp) {
 		super(lex);
 		this.mp = mp;
+		this.nodo = mp.getNodeRoot();
 	}
 
         public void syntax_error(Symbol cur_token) {
@@ -31,12 +32,12 @@ parser code {:
 
 /* Terminals (tokens returned by the scanner). */
 terminal String          PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ, RECURSIVE;
-terminal String          CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL;
+terminal String          CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL, LONG_HIDDEN;
 terminal String          RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE, EXIT;
 
 /* Non-terminals */
 non terminal String         main, main1, main2, main3, space, path, path1, exit;
-non terminal String 		pwd, ls, ls1, l1,l2;
+non terminal String 		pwd, ls, ls1;
 non terminal String 		cd, cd1;
 non terminal String 		touch, touch1, touch2;
 non terminal String 		mv, mv1, mv2, mv3;
@@ -81,29 +82,23 @@ pwd ::= 	PWD {:mp.pwd();:}
 
 /*==============Gramtica LS==============*/
 ls ::=		LS space ls1
-			| LS:e1 {:mp.ls();:}
+			| LS:e1 {:mp.ls(0);:}
 			;
 
-ls1 ::=		l1 space l2
-			| l2 space l1
-			| l1
-			| l2
-			;
-
-l1 ::=		LONG
-			;
-
-l2 ::=		HIDDEN
+ls1 ::=		LONG {:mp.ls(1);:}
+			| HIDDEN {:mp.ls(2);:}
+			| LONG_HIDDEN {:mp.ls(3);:}
 			;
 
 /*==============Gramtica CD==============*/
 
 cd ::=		CD space cd1
-			| CD {:mp.functionByPath(CD_HOME, nodo, nodoAnterior, 2);:}
+			| CD {:mp.functionByPath(CD_ROOT, nodo, nodoAnterior, 2);:}
 			;
 
 cd1 ::=		BACK {:mp.cdByBack();:}
 			| ACTUAL 
+			| SLASH {:mp.functionByPath(CD_ROOT, nodo, nodoAnterior, 2);:}
 			| path:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 2);:}
 			;
 
@@ -154,15 +149,15 @@ p ::=		VARIOUS
 rm ::=		RM space rm1
 			;
 
-rm1 ::=		rm2 space rm3
-			| rm3:e1 {:RESULT = e1; if(option == 1){mp.rmById(RESULT);} else {mp.rmByPath(nodo, nodoAnterior);}:}
+rm1 ::=		rm2 space rm3:e1 {:RESULT = e1; if(option == 1){mp.rmById(RESULT, 2);} else {mp.rmdirByPath(nodo, nodoAnterior, 1);}:} 
+			| rm3:e1 {:RESULT = e1; if(option == 1){mp.rmById(RESULT, 1);} else {mp.rmByPath(nodo, nodoAnterior);}:}
 			;
 
 rm2 ::=		ALL
 			;
 
-rm3 ::= 	path
-			| ID
+rm3 ::= 	path:e2 {:RESULT = e2; option = 2;:}
+			| ID:e1 {:RESULT = e1; option = 1;:}
 			;
 
 /*==============Gramtica CP==============*/
@@ -192,8 +187,8 @@ cp5 ::= 	cp4
 rmdir ::= 	RMDIR space rmdir1
 			;
 
-rmdir1 ::= 	path
-			| ID
+rmdir1 ::= 	path {:mp.rmdirByPath(nodo, nodoAnterior, 0);:}
+			| ID:e1 {:RESULT = e1; mp.rmById(RESULT, 0);:}
 			| ACTUAL
 			| BACK
 			;
@@ -254,7 +249,7 @@ path1 ::= 	SLASH:e1 ID:e2 {:RESULT= e1 + e2;
 /*==============Gramtica PATH==============*/
 
 space ::=	space SPACE 
-			| SPACE {: positionNode = 0; nodoAnterior = null;:}
+			| SPACE {: positionNode = 1; nodoAnterior = "";:}
 			;
 
 /*==============Gramtica PATH==============*/

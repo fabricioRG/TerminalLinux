@@ -19,6 +19,7 @@ public class Nodo {
     private  int posicion;
     private int id;
     private int tamano;
+    private int numeroEnlaces;
     private Date fechaCreacion;
     private boolean directory;
     private boolean execute;
@@ -26,13 +27,14 @@ public class Nodo {
     private boolean visible;
     private DefaultMutableTreeNode dmtn;
 
-    public Nodo(Nodo padre, String nombre, int posicion, int id, int tamano, Date fechaCreacion, 
+    public Nodo(Nodo padre, String nombre, int posicion, int id, int tamano, int numeroEnlaces, Date fechaCreacion, 
             boolean directory, boolean execute, boolean write, boolean visible, DefaultMutableTreeNode dmtn) {
         this.padre = padre;
         this.nombre = nombre;
         this.posicion = posicion;
         this.id = id;
         this.tamano = tamano;
+        this.numeroEnlaces = numeroEnlaces;
         this.fechaCreacion = fechaCreacion;
         this.directory = directory;
         this.execute = execute;
@@ -48,6 +50,7 @@ public class Nodo {
         this.posicion = posicion;
         this.id = id;
         this.tamano = tamano;
+        this.numeroEnlaces = 0;
         this.fechaCreacion = fechaCreacion;
         this.directory = directory;
         this.execute = true;
@@ -142,6 +145,14 @@ public class Nodo {
 
     public void setDirectory(boolean directory) {
         this.directory = directory;
+    }
+
+    public int getNumeroEnlaces() {
+        return numeroEnlaces;
+    }
+
+    public void setNumeroEnlaces(int numeroEnlaces) {
+        this.numeroEnlaces = numeroEnlaces;
     }
     
 }
