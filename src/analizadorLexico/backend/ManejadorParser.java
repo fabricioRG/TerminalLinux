@@ -3,6 +3,8 @@ package analizadorLexico.backend;
 import Node.*;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -16,10 +18,12 @@ public class ManejadorParser {
     private ManejadorNodo mn = null;
     private ManejadorAreaTexto mat = null;
     private String pathActual = "/";
+    private DefaultMutableTreeNode root = null;
 
     public ManejadorParser(ManejadorAreaTexto mat) {
-        mn = new ManejadorNodo();
         this.mat = mat;
+        root = (DefaultMutableTreeNode) this.mat.getAt().getjTree1().getModel().getRoot();
+        mn = new ManejadorNodo(root);
     }
 
     public Nodo getNode(String nodoActual, String nodoAnterior, Nodo nodo, int position, int option) {
@@ -43,6 +47,7 @@ public class ManejadorParser {
         } else if (errors == 1) {
             if (option == OPTION_DIRECTORIO || option == OPTION_ARCHIVO) {
                 mn.addNodo(padre, nodoAnterior, option);
+                refrescarArbol();
                 errors = 0;
             } else if (option == 2) {
                 errors = 0;
@@ -75,6 +80,7 @@ public class ManejadorParser {
     public void functionById(String nombreNodo, int option) { //Archivo = 1, Carpeta = 0
         Nodo nodo = this.mn.getNodoByPath(pathActual, OPTION_DIRECTORIO);
         this.mn.addNodo(nodo, nombreNodo, option);
+        refrescarArbol();
     }
 
     public void ls(int option) {
@@ -110,6 +116,7 @@ public class ManejadorParser {
             Nodo nodo = this.mn.getNodoByPath(path1, OPTION_ARCHIVO);
             if (nodo != null) {
                 this.mn.removeNodo(nodo);
+                refrescarArbol();
             } else {
                 throw new Exception("No se pudo efectuar 'rm' sobre '" + nombreNodo + "': No existe el archivo o es directorio");
             }
@@ -119,11 +126,13 @@ public class ManejadorParser {
                 if (option == 0) {
                     if (nodo.getNumeroEnlaces() <= 0) {
                         this.mn.removeNodo(nodo);
+                        refrescarArbol();
                     } else {
                         throw new Exception("No se pudo efectuar 'rmdir' sobre '" + nombreNodo + "': Directorio no vacio");
                     }
-                } else if (option == 2){
+                } else if (option == 2) {
                     this.mn.removeNodo(nodo);
+                    refrescarArbol();
                 }
             } else {
                 throw new Exception("No se pudo efectuar 'rmdir' sobre '" + nombreNodo + "': No existe el directorio o es archivo");
@@ -136,6 +145,7 @@ public class ManejadorParser {
             Nodo node = this.mn.getArchivoFromPadreNodo(nodo, nodoAnterior);
             if (node != null) {
                 mn.removeNodo(node);
+                refrescarArbol();
             } else {
                 throw new Exception("No se pudo efectuar 'rm' sobre '" + nodoAnterior + "': No existe el archivo.");
             }
@@ -150,11 +160,13 @@ public class ManejadorParser {
                 if (option == 0) {
                     if (nodo.getNumeroEnlaces() <= 0) {
                         this.mn.removeNodo(nodo);
+                        refrescarArbol();
                     } else {
                         throw new Exception("No se pudo efectuar 'rmdir' sobre '" + nodoAnterior + "': Directorio no vacio");
                     }
                 } else if (option == 1) {
                     this.mn.removeNodo(nodo);
+                    refrescarArbol();
                 }
             } else {
                 throw new Exception("No se pudo efectuar 'rmdir' sobre '" + nodo.getNombre() + "': no es directorio");
@@ -165,7 +177,12 @@ public class ManejadorParser {
     }
 
     public void rmdirById() {
+        
+    }
 
+    public void refrescarArbol() {
+        DefaultTreeModel model = (DefaultTreeModel) this.mat.getAt().getjTree1().getModel();
+        model.reload(getRoot());
     }
 
     public void pwd() {
@@ -173,6 +190,8 @@ public class ManejadorParser {
     }
 
     public void exit() {
+        Exportador exp = new Exportador();
+        exp.printList(this.mn.getListaNodos());
         System.exit(0);
     }
 
@@ -190,6 +209,14 @@ public class ManejadorParser {
 
     public void setPathActual(String pathActual) {
         this.pathActual = pathActual;
+    }
+
+    public DefaultMutableTreeNode getRoot() {
+        return root;
+    }
+
+    public void setRoot(DefaultMutableTreeNode root) {
+        this.root = root;
     }
 
 }

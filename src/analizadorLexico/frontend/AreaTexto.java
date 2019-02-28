@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JTextPane;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.undo.UndoManager;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -181,6 +182,14 @@ public class AreaTexto extends javax.swing.JPanel implements KeyListener, MouseL
 
     public void setModificado(boolean modificado) {
         this.modificado = modificado;
+    }
+
+    public JTree getjTree1() {
+        return jTree1;
+    }
+
+    public void setjTree1(JTree jTree1) {
+        this.jTree1 = jTree1;
     }
 
 

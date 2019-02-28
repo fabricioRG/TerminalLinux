@@ -40,12 +40,12 @@ public class ManejadorAnalizador {
     }
 
     //Metodo encargado de abrir una nueva ventana colocandole como texto inicial el seleccionado
-
     //Metodo encargado de cerrar una ventanva, verificando que se hayan guardado los cambios o no
     public void cerrarVentana(int ventana) {
         AreaTexto at = (AreaTexto) analizador.jTabbedPane.getSelectedComponent();
-        if(ventana >= 0){
-        analizador.jTabbedPane.remove(ventana);            
+        if (ventana >= 0) {
+            
+            analizador.jTabbedPane.remove(ventana);
         }
     }
 
@@ -62,7 +62,7 @@ public class ManejadorAnalizador {
 
     //Metodo encargado de cerrar todas las ventanas abiertas
     public void cerrarVentanas(int tamaño) {
-            System.exit(0);
+        System.exit(0);
     }
 
 }

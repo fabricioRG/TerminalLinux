@@ -1,9 +1,11 @@
 package Node;
 
+import analizadorLexico.backend.Importador;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -26,13 +28,19 @@ public class ManejadorNodo {
     private List<Nodo> listaNodos = null;
     private SimpleDateFormat fechaFormat = null;
     private int contadorId = 0;
+    private Importador imp = null;
 
-    public ManejadorNodo() {
+    public ManejadorNodo(DefaultMutableTreeNode root) {
         this.listaNodos = new LinkedList<>();
         fechaFormat = new SimpleDateFormat(formatoFecha);
         Date date = new Date();
-        Nodo nodo = new Nodo(null, "", 0, contadorId, 1, true, date, null);
+        Nodo nodo = new Nodo(null, "", 0, contadorId, 254, true, date, root);
         this.listaNodos.add(nodo);
+        this.imp = new Importador(this);
+        this.imp.readFile();
+        if(this.imp.getListaNodos() != null){
+            this.listaNodos.addAll(this.imp.getListaNodos());
+        }
     }
 
     public void addNodo(Nodo padre, String nombreNodo, int option) { //Archivo = 1, Carpeta = 0
@@ -44,7 +52,9 @@ public class ManejadorNodo {
         }
         int tamano = (int) (Math.random() * EXTREMO_SUPERIOR) + EXTREMO_INFERIOR;
         Date date = new Date();
-        Nodo nodo = new Nodo(padre, nombreNodo, padre.getPosicion() + 1, ++contadorId, tamano, directory, date, null);
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(nombreNodo);
+        padre.getDmtn().add(node);
+        Nodo nodo = new Nodo(padre, nombreNodo, padre.getPosicion() + 1, ++contadorId, tamano, directory, date, node);
         padre.setNumeroEnlaces(padre.getNumeroEnlaces() + 1);
         this.listaNodos.add(nodo);
     }
@@ -54,6 +64,7 @@ public class ManejadorNodo {
             if (listaNodos.get(i).getId() == nodo.getId()) {
                 listaNodos.get(i).getPadre().setNumeroEnlaces(nodo.getPadre().getNumeroEnlaces() - 1);
                 listaNodos.remove(i);
+                nodo.getPadre().getDmtn().remove(nodo.getDmtn());
                 break;
             }
         }
