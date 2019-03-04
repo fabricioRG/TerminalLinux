@@ -35,6 +35,7 @@ public class Importador {
     private ManejadorNodo mn = null;
     private List<Nodo> listaNodos = null;
     private Nodo nodoRaiz = null;
+    private int rootCount = 0;
 
     public Importador(ManejadorNodo mn) {
         this.mn = mn;
@@ -73,6 +74,9 @@ public class Importador {
         boolean isExecute = Boolean.valueOf(nodos[8]);
         boolean isWrite = Boolean.valueOf(nodos[9]);
         boolean isVisible = Boolean.valueOf(nodos[10]);
+        if(idPadre == 0){
+            this.rootCount++;
+        }
         Nodo padre = getPadre(idPadre);
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(nombreNodo);
         padre.getDmtn().add(node);
@@ -93,7 +97,7 @@ public class Importador {
             while ((linea = br.readLine()) != null) {
                 addNodo(linea.substring(linea.indexOf(INICIO_TEXT) + 1, linea.indexOf(FIN_TEXT)));
             }
-                System.out.println("sadlfjsaldfkjlñaskdfj");
+            this.mn.getNodeRoot().setNumeroEnlaces(this.rootCount);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

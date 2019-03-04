@@ -33,7 +33,7 @@ public class ManejadorAreaTexto {
     }
 
     public void analizarTexto() {
-        String input = getText();
+        String input = getText().trim();
         StringReader sr = new StringReader(input);
 
         Lexer lexer = new Lexer(sr);
@@ -42,7 +42,7 @@ public class ManejadorAreaTexto {
             pars.parse();
             setText(0, this.mp.getPathActual());
         } catch (Exception ex) {
-            setText(1, ACCION_NO_VALIDA + ex.getMessage() + "---\n" + COMANDOS_INIT + this.mp.getPathActual());
+            setText(1, ACCION_NO_VALIDA + "---"+ ex.getMessage() +" . Ingrese de nuevo el comando.\n" + COMANDOS_INIT + this.mp.getPathActual());
             ex.printStackTrace();
         }
     }

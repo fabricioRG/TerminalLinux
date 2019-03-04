@@ -59,6 +59,16 @@ public class ManejadorNodo {
         this.listaNodos.add(nodo);
     }
 
+    public void actualizarNodo(Nodo nodo){
+        for (Nodo nodos : listaNodos) {
+            if(nodos.getId() == nodo.getId()){
+                nodos.setExecute(nodo.isExecute());
+                nodos.setWrite(nodo.isWrite());
+                nodos.setVisible(nodo.isVisible());
+            }
+        }
+    }
+    
     public void removeNodo(Nodo nodo) {
         for (int i = 0; i < listaNodos.size(); i++) {
             if (listaNodos.get(i).getId() == nodo.getId()) {

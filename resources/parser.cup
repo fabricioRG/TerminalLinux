@@ -13,30 +13,42 @@ parser code {:
 	private int positionNode = 1; //Posicion de los nodos en el arbol
 	private int option = 0; //Directorio = 0, Path = 1
 	private String nodoAnterior = "";
+	private String nodoAnterior1 = "";
 	private ManejadorParser mp = null;
 	private Nodo nodo = null;
-
-
+	private Nodo nodo1 = null;
+	private int chmodOption = 0;
+	private boolean recursive = false;
+	private int chmodFuntion = 0;
 
 	// Connect this parser to a scanner!
 	public parser(Lexer lex, ManejadorParser mp) {
 		super(lex);
 		this.mp = mp;
 		this.nodo = mp.getNodeRoot();
+		this.nodo1 = mp.getNodoActual();
+		this.nodoAnterior1 = nodo1.getNombre();
 	}
 
         public void syntax_error(Symbol cur_token) {
             System.out.println("Error sintactico en <" + cur_token.value + ">");
         }
+
 :}
 
 /* Terminals (tokens returned by the scanner). */
-terminal String          PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ, RECURSIVE;
-terminal String          CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL, LONG_HIDDEN;
-terminal String          RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE, EXIT;
+terminal String         PWD, LS, LONG, HIDDEN, EXECUTE, WRITE, READ, RECURSIVE, CONCAT;
+terminal String         CD, BACK, ACTUAL, TOUCH, MKDIR, MV, CP, VARIOUS, ALL, LONG_HIDDEN;
+terminal String         RM, RMDIR, SLASH, AGREGAR, QUITAR, ID, CHMOD, SPACE, EXIT;
+terminal String 		QUITAR_EXECUTE, QUITAR_WRITE, QUITAR_READ, QUITAR_READ_WRITE_EXECUTE;
+terminal String 		QUITAR_EXECUTE_READ, QUITAR_EXECUTE_WRITE, QUITAR_READ_WRITE;
+terminal String 		AGREGAR_EXECUTE, AGREGAR_WRITE, AGREGAR_READ, AGREGAR_READ_WRITE_EXECUTE;
+terminal String 		AGREGAR_EXECUTE_READ, AGREGAR_EXECUTE_WRITE, AGREGAR_READ_WRITE;
 
 /* Non-terminals */
-non terminal String         main, main1, main2, main3, space, path, path1, exit;
+non terminal String         main, main1, main2, main3, space;
+non terminal String 		path1, path2, path3, pathRel, pathAbs, exit;
+non terminal String 		palabraRes;
 non terminal String 		pwd, ls, ls1;
 non terminal String 		cd, cd1;
 non terminal String 		touch, touch1, touch2;
@@ -45,20 +57,20 @@ non terminal String 		mkdir, mkdir1, p;
 non terminal String 		rm, rm1, rm2, rm3;
 non terminal String 		cp, cp1, cp2, cp3, cp4, cp5;
 non terminal String 		rmdir, rmdir1;
-non terminal String 		chmod, chmod1, chmod2, chmod3, chmod4, x, w, r;
+non terminal String 		chmod, chmod1, chmod2, chmod3, chmod4, agregar, quitar;
 
 /* The grammar */
 start with main;
 
 
 /*==============Gramtica main==============*/
-main ::= 	main2
+main ::= 	main CONCAT main2
+			| main1
+			//| CONCAT {: positionNode = 1; nodoAnterior = ""; mp.setErrors(0);:}
+			| error:e SPACE
 			;
 
-main1 ::=	space
-			;
-
-main2 ::= 	pwd
+main1 ::= 	pwd
 			| exit
 			| ls
 			| cd
@@ -69,9 +81,6 @@ main2 ::= 	pwd
 			| cp
 			| rmdir
 			| chmod
-			;
-
-main3 ::=	space
 			;
 
 /*==============Gramtica PWD==============*/
@@ -99,7 +108,8 @@ cd ::=		CD space cd1
 cd1 ::=		BACK {:mp.cdByBack();:}
 			| ACTUAL 
 			| SLASH {:mp.functionByPath(CD_ROOT, nodo, nodoAnterior, 2);:}
-			| path:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 2);:}
+			| pathAbs:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 2);:}
+			| pathRel:e2 {:RESULT = e2;:}
 			;
 
 /*==============Gramtica TOUCH==============*/
@@ -112,7 +122,9 @@ touch1 ::= 	touch1 space touch2
 			;
 
 touch2 ::=	ID:e2 {:RESULT = e2; mp.functionById(RESULT, 1);:}
-			| path:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 1);:}
+			| palabraRes:e3 {:RESULT = e3;:}
+			| pathAbs:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 1);:}
+			| pathRel:e4 {:RESULT = e4; :}
 			; 
 
 /*==============Gramtica MV==============*/
@@ -122,8 +134,11 @@ mv ::=		MV space mv1
 mv1 ::=		mv2 space mv3
 			;
 
-mv2 ::=		path
+mv2 ::=		pathAbs
+			| pathRel
 			| ID
+			| ACTUAL pathAbs
+			| BACK pathAbs
 			;
 
 mv3 ::=		mv2
@@ -136,9 +151,13 @@ mv3 ::=		mv2
 mkdir ::= 	MKDIR space mkdir1
 			;
 
-mkdir1 ::= 	ID:e2 {:RESULT = e2; mp.functionById(RESULT, 0);:} 
-			| path:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 0);:}
-			| p space path
+mkdir1 ::= 	pathAbs:e1 {:RESULT = e1; mp.functionByPath(RESULT, nodo, nodoAnterior, 0);:}
+			| pathRel:e3 ID:e4 {:RESULT = e3 + e4;:}
+			| ACTUAL pathAbs
+			| BACK pathAbs
+			| p space pathAbs
+			| ID:e2 {:RESULT = e2; mp.functionById(RESULT, 0);:}
+			| palabraRes:e3 {:RESULT = e3; mp.functionById(RESULT, 0);:}
 			;
 
 p ::=		VARIOUS
@@ -156,8 +175,14 @@ rm1 ::=		rm2 space rm3:e1 {:RESULT = e1; if(option == 1){mp.rmById(RESULT, 2);} 
 rm2 ::=		ALL
 			;
 
-rm3 ::= 	path:e2 {:RESULT = e2; option = 2;:}
-			| ID:e1 {:RESULT = e1; option = 1;:}
+rm3 ::= 	ID:e1 {:RESULT = e1; option = 1;:}
+			| palabraRes:e4 {:RESULT = e4; option =1;:}
+			| ACTUAL pathAbs
+			| BACK pathAbs
+			| BACK
+			| ACTUAL
+			| pathAbs:e2 {:RESULT = e2; option = 2;:}
+			| pathRel:e3 {:RESULT = e3; option = 2;:}
 			;
 
 /*==============Gramtica CP==============*/
@@ -175,11 +200,16 @@ cp2 ::=		ALL
 cp3 ::=		cp4 //{:primerNodo = nodo;:} space cp5 {:segundoNodo = nodo;:}
 			;
 
-cp4 ::=		path
+cp4 ::=		pathAbs
+			| pathRel
+			| ACTUAL pathAbs
+			| BACK pathAbs
 			| ID
 			;
 
 cp5 ::= 	cp4
+			| ACTUAL
+			| BACK
 			;
 
 /*==============Gramtica RMDIR==============*/
@@ -187,70 +217,93 @@ cp5 ::= 	cp4
 rmdir ::= 	RMDIR space rmdir1
 			;
 
-rmdir1 ::= 	path {:mp.rmdirByPath(nodo, nodoAnterior, 0);:}
+rmdir1 ::= 	pathAbs {:mp.rmdirByPath(nodo, nodoAnterior, 0);:}
+			| pathRel {:mp.rmdirByPath(nodo1, nodoAnterior1, 0);:}
 			| ID:e1 {:RESULT = e1; mp.rmById(RESULT, 0);:}
+			| palabraRes:e2 {:RESULT = e2; mp.rmById(RESULT, 0);:}
 			| ACTUAL
 			| BACK
 			;
 
 /*==============Gramtica RMDIR==============*/
 
-chmod ::=	CHMOD space RECURSIVE space chmod1
-			| CHMOD space chmod1
+chmod ::=	CHMOD space RECURSIVE space chmod1:e1 {:RESULT = e1; mp.chmodByPathAndId(nodo, chmodOption, chmodFuntion, true, RESULT);:}
+			| CHMOD space chmod1:e2 {:RESULT = e2; mp.chmodByPathAndId(nodo, chmodOption, chmodFuntion, false, RESULT);:}
 			;
 
-chmod1 ::= 	chmod2 space chmod3 space chmod4
+chmod1 ::= 	chmod2 space chmod3:e2 {:RESULT = e2;:}
 			;
 
-chmod2 ::=	AGREGAR
-			| QUITAR
+chmod2 ::=	agregar
+			| quitar
 			;
 
-chmod3 ::= 	r w x
-			| w x r
-			| x r w 
-			| r x w 
-			| w r x
-			| x w r 
-			| r x
-			| r w
-			| w x 
-			| w r 
-			| x w 
-			| x r
-			| x 
-			| r
-			| w
+chmod3 ::=	pathAbs:e1 {:RESULT = e1; chmodFuntion = 1;:}
+			| palabraRes:e2 {:RESULT = e2;:}
+			| ID:e3 {:RESULT = e3; chmodFuntion = 2;:}
 			;
 
-chmod4 ::=	path
-			| ID
+agregar ::=	AGREGAR_READ {:chmodOption = 1;:}//#1
+			| AGREGAR_WRITE {:chmodOption = 2;:}//#2
+			| AGREGAR_EXECUTE {:chmodOption = 3;:}//#3
+			| AGREGAR_READ_WRITE {:chmodOption = 4;:}//#4
+			| AGREGAR_EXECUTE_READ {:chmodOption = 5;:}//#5
+			| AGREGAR_EXECUTE_WRITE {:chmodOption = 6;:}//#6
+			| AGREGAR_READ_WRITE_EXECUTE {:chmodOption = 7;:}//#7
 			;
 
-x ::= 		EXECUTE
-			;
-
-w ::=		WRITE
-			;
-
-r ::=		READ
+quitar ::=	ALL {:chmodOption = 8;:}//#8
+			| QUITAR_WRITE {:chmodOption = 9;:}//#9
+			| QUITAR_EXECUTE {:chmodOption = 10;:}//#10
+			| QUITAR_READ_WRITE {:chmodOption = 11;:}//#11
+			| QUITAR_EXECUTE_READ {:chmodOption = 12;:}//#12
+			| QUITAR_EXECUTE_WRITE {:chmodOption = 13;:}//#13
+			| QUITAR_READ_WRITE_EXECUTE {:chmodOption = 14;:}//#14
 			;
 
 /*==============Gramtica PATH==============*/
 
-path ::= 	path:e1 path1:e2 {:RESULT = e1 + e2;:}
-			| path1: e1 {:RESULT = e1;:}
+pathRel ::=	pathRel:e1 path1:e2 {:RESULT = e1 + e2;:}
+			| path1:e1 {:RESULT = e1;:}
 			;
 
-path1 ::= 	SLASH:e1 ID:e2 {:RESULT= e1 + e2;
+pathAbs ::= pathAbs:e1 path2:e2 {:RESULT = e1 + e2;:}
+			| path2:e1 {:RESULT = e1;:}
+			;
+
+path1 ::= 	path3:e1 SLASH:e2 {:RESULT= e1 + e2; positionNode = nodo1.getPosicion() + 1;
+			nodo1 = mp.getNode(e1, nodoAnterior1, nodo1, positionNode, option); nodoAnterior1 = e1;:}
+		;
+
+path2 ::= 	SLASH:e1 path3:e2 {:RESULT= e1 + e2;
 			nodo = mp.getNode(e2, nodoAnterior, nodo, positionNode, option); positionNode++; nodoAnterior = e2;:}
 		;
+
+path3 ::=	palabraRes:e1 {:RESULT = e1;:}
+			| ID:e2 {:RESULT = e2;:}
+			;
 
 /*==============Gramtica PATH==============*/
 
 space ::=	space SPACE 
-			| SPACE {: positionNode = 1; nodoAnterior = "";:}
+			| SPACE {: positionNode = 1; nodoAnterior = ""; option = 0;:}
+			| error:e SPACE
 			;
+
+/*==============Gramtica PALABRA RESERVADA==============*/
+
+palabraRes ::=	PWD:e1 {:RESULT = e1;:}
+				| LS:e2 {:RESULT = e2;:}
+				| CD:e3 {:RESULT = e3;:}
+				| TOUCH:e4 {:RESULT = e4;:}
+				| MV:e5 {:RESULT = e5;:}
+				| MKDIR:e6 {:RESULT = e6;:}
+				| RM:e7 {:RESULT = e7;:}
+				| CHMOD:e8 {:RESULT = e8;:}
+				| CP:e9 {:RESULT = e9;:}
+				| RMDIR:e10 {:RESULT = e10;:}
+				| EXIT:e11 {:RESULT = e11;:}
+				;
 
 /*==============Gramtica PATH==============*/
 

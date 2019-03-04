@@ -45,12 +45,42 @@ Identificador = ({Letra}|{Digito})({Letra}|{Digito}|"-"|"_"|"@"|"+"|"*"|"#"|".")
 
 	"pwd" {return symbol(PWD, yytext());}
 	"ls" {return symbol(LS, yytext());}
+	"-x" {return symbol(QUITAR_EXECUTE, yytext());}
+	"-w" {return symbol(QUITAR_WRITE, yytext());}
+	"-xr" {return symbol(QUITAR_EXECUTE_READ, yytext());}
+	"-xw" {return symbol(QUITAR_EXECUTE_WRITE, yytext());}
+	"-rx" {return symbol(QUITAR_EXECUTE_READ, yytext());}
+	"-rw" {return symbol(QUITAR_READ_WRITE, yytext());}
+	"-wx" {return symbol(QUITAR_EXECUTE_WRITE, yytext());}
+	"-wr" {return symbol(QUITAR_READ_WRITE, yytext());}
+	"-xrw" {return symbol(QUITAR_READ_WRITE_EXECUTE, yytext());}
+	"-xwr" {return symbol(QUITAR_READ_WRITE_EXECUTE, yytext());}
+	"-rxw" {return symbol(QUITAR_READ_WRITE_EXECUTE, yytext());}
+	"-rwx" {return symbol(QUITAR_READ_WRITE_EXECUTE, yytext());}
+	"-wxr" {return symbol(QUITAR_READ_WRITE_EXECUTE, yytext());}
+	"-wrx" {return symbol(QUITAR_READ_WRITE_EXECUTE, yytext());}
+	"+x" {return symbol(AGREGAR_EXECUTE, yytext());}
+	"+w" {return symbol(AGREGAR_WRITE, yytext());}
+	"+r" {return symbol(AGREGAR_READ, yytext());}
+	"+xr" {return symbol(AGREGAR_EXECUTE_READ, yytext());}
+	"+xw" {return symbol(AGREGAR_EXECUTE_WRITE, yytext());}
+	"+rx" {return symbol(AGREGAR_EXECUTE_READ, yytext());}
+	"+rw" {return symbol(AGREGAR_READ_WRITE, yytext());}
+	"+wx" {return symbol(AGREGAR_EXECUTE_WRITE, yytext());}
+	"+wr" {return symbol(AGREGAR_READ_WRITE, yytext());}
+	"+xrw" {return symbol(AGREGAR_READ_WRITE_EXECUTE, yytext());}
+	"+xwr" {return symbol(AGREGAR_READ_WRITE_EXECUTE, yytext());}
+	"+rxw" {return symbol(AGREGAR_READ_WRITE_EXECUTE, yytext());}
+	"+rwx" {return symbol(AGREGAR_READ_WRITE_EXECUTE, yytext());}
+	"+wxr" {return symbol(AGREGAR_READ_WRITE_EXECUTE, yytext());}
+	"+wrx" {return symbol(AGREGAR_READ_WRITE_EXECUTE, yytext());}
 	"-l" {return symbol(LONG, yytext());}
 	"-a" {return symbol(HIDDEN, yytext());}
 	"-la" {return symbol(LONG_HIDDEN, yytext());}
 	"-p" {return symbol(VARIOUS, yytext());}
 	"-r" {return symbol(ALL, yytext());}
 	"-R" {return symbol(RECURSIVE, yytext());}
+	"&&" {return symbol(CONCAT, yytext());}
 	"cd" {return symbol(CD, yytext());}
 	"touch"	{return symbol(TOUCH, yytext());}
 	"mkdir" {return symbol(MKDIR, yytext());}
@@ -62,11 +92,7 @@ Identificador = ({Letra}|{Digito})({Letra}|{Digito}|"-"|"_"|"@"|"+"|"*"|"#"|".")
 	"exit" {return symbol(EXIT, yytext());}
 	".." {return symbol(BACK, yytext());}
 	"." {return symbol(ACTUAL, yytext());}
-	"x" {return symbol(EXECUTE, yytext());}
-	"w" {return symbol(WRITE, yytext());}
-	"r" {return symbol(READ, yytext());}
 	"+" {return symbol(AGREGAR, yytext());}
-	"-" {return symbol(QUITAR, yytext());}
 	"/" {return symbol(SLASH, yytext());}
 	{Identificador} {return symbol(ID, yytext());}	
 	{WhiteSpace} 		{return symbol(SPACE, yytext());}

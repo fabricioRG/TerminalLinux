@@ -8,35 +8,50 @@ package analizadorLexico;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int EXIT = 28;
-  public static final int VARIOUS = 17;
-  public static final int LONG = 4;
-  public static final int READ = 8;
-  public static final int CHMOD = 26;
-  public static final int LS = 3;
-  public static final int CP = 16;
-  public static final int SLASH = 22;
-  public static final int ALL = 18;
-  public static final int RM = 20;
-  public static final int CD = 10;
-  public static final int MV = 15;
-  public static final int ID = 25;
-  public static final int WRITE = 7;
-  public static final int MKDIR = 14;
-  public static final int SPACE = 27;
-  public static final int PWD = 2;
-  public static final int RECURSIVE = 9;
-  public static final int EOF = 0;
-  public static final int ACTUAL = 12;
-  public static final int error = 1;
-  public static final int RMDIR = 21;
-  public static final int HIDDEN = 5;
-  public static final int LONG_HIDDEN = 19;
-  public static final int AGREGAR = 23;
-  public static final int TOUCH = 13;
-  public static final int QUITAR = 24;
+  public static final int SPACE = 28;
+  public static final int QUITAR_EXECUTE_READ = 34;
+  public static final int CONCAT = 10;
+  public static final int SLASH = 23;
+  public static final int AGREGAR_EXECUTE_READ = 41;
+  public static final int MKDIR = 15;
+  public static final int QUITAR_EXECUTE_WRITE = 35;
   public static final int EXECUTE = 6;
-  public static final int BACK = 11;
+  public static final int AGREGAR_READ = 39;
+  public static final int WRITE = 7;
+  public static final int QUITAR_WRITE = 31;
+  public static final int CP = 17;
+  public static final int AGREGAR_EXECUTE = 37;
+  public static final int LS = 3;
+  public static final int AGREGAR_EXECUTE_WRITE = 42;
+  public static final int AGREGAR = 24;
+  public static final int AGREGAR_READ_WRITE = 43;
+  public static final int CD = 11;
+  public static final int RM = 21;
+  public static final int EXIT = 29;
+  public static final int ID = 26;
+  public static final int EOF = 0;
+  public static final int LONG_HIDDEN = 20;
+  public static final int VARIOUS = 18;
+  public static final int error = 1;
+  public static final int RMDIR = 22;
+  public static final int QUITAR_READ_WRITE_EXECUTE = 33;
+  public static final int PWD = 2;
+  public static final int QUITAR_READ_WRITE = 36;
+  public static final int QUITAR = 25;
+  public static final int RECURSIVE = 9;
+  public static final int READ = 8;
+  public static final int AGREGAR_WRITE = 38;
+  public static final int QUITAR_EXECUTE = 30;
+  public static final int CHMOD = 27;
+  public static final int ACTUAL = 13;
+  public static final int AGREGAR_READ_WRITE_EXECUTE = 40;
+  public static final int LONG = 4;
+  public static final int HIDDEN = 5;
+  public static final int ALL = 19;
+  public static final int BACK = 12;
+  public static final int QUITAR_READ = 32;
+  public static final int MV = 16;
+  public static final int TOUCH = 14;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -48,6 +63,7 @@ public class sym {
   "WRITE",
   "READ",
   "RECURSIVE",
+  "CONCAT",
   "CD",
   "BACK",
   "ACTUAL",
@@ -66,7 +82,21 @@ public class sym {
   "ID",
   "CHMOD",
   "SPACE",
-  "EXIT"
+  "EXIT",
+  "QUITAR_EXECUTE",
+  "QUITAR_WRITE",
+  "QUITAR_READ",
+  "QUITAR_READ_WRITE_EXECUTE",
+  "QUITAR_EXECUTE_READ",
+  "QUITAR_EXECUTE_WRITE",
+  "QUITAR_READ_WRITE",
+  "AGREGAR_EXECUTE",
+  "AGREGAR_WRITE",
+  "AGREGAR_READ",
+  "AGREGAR_READ_WRITE_EXECUTE",
+  "AGREGAR_EXECUTE_READ",
+  "AGREGAR_EXECUTE_WRITE",
+  "AGREGAR_READ_WRITE"
   };
 }
 
