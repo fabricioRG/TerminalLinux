@@ -41,6 +41,7 @@ public class ManejadorAreaTexto {
         try {
             pars.parse();
             setText(0, this.mp.getPathActual());
+            this.mp.exportarArchivo();
         } catch (Exception ex) {
             setText(1, ACCION_NO_VALIDA + "---"+ ex.getMessage() +" . Ingrese de nuevo el comando.\n" + COMANDOS_INIT + this.mp.getPathActual());
             ex.printStackTrace();

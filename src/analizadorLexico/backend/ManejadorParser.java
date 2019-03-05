@@ -316,9 +316,12 @@ public class ManejadorParser {
         this.mat.setText(2, pathActual + "\n");
     }
 
-    public void exit() {
+    public void exportarArchivo(){
         Exportador exp = new Exportador();
         exp.printList(this.mn.getListaNodos());
+    }
+    
+    public void exit() {
         System.exit(0);
     }
 

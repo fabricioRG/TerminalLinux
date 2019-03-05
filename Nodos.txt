@@ -8,4 +8,4 @@
 (0,algo2,1,8,1426,0,2019-07-04 02:07:13,false,true,true,true)
 (0,algo1,1,9,4543,0,2019-07-04 02:07:18,true,true,true,true)
 (0,1,1,10,434,0,2019-08-04 02:08:29,false,true,true,false)
-(0,2,1,11,3418,0,2019-08-04 02:08:29,false,false,false,true)
+(0,2,1,11,3418,0,2019-08-04 02:08:29,false,true,true,true)
